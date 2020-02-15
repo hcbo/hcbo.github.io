@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="定义  工厂模式是我们最常用的实例化对象的模式,是用工厂方法代替new的一种操作  需求  模拟植物大战僵尸中的绿豆,蓝冰,火墙  123456789101112131415161718192021222324252627&#x2F;&#x2F;Bean.javapublic class Bean &amp;#123;    public String getName() &amp;#123;        return &quot;绿逗&quot;;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工厂模式以及开闭原则的实现">
+<meta property="og:url" content="http://yoursite.com/2019/03/12/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E4%BB%A5%E5%8F%8A%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="定义  工厂模式是我们最常用的实例化对象的模式,是用工厂方法代替new的一种操作  需求  模拟植物大战僵尸中的绿豆,蓝冰,火墙  123456789101112131415161718192021222324252627&#x2F;&#x2F;Bean.javapublic class Bean &amp;#123;    public String getName() &amp;#123;        return &quot;绿逗&quot;;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2019/03/12/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E4%BB%A5%E5%8F%8A%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%AE%9E%E7%8E%B0/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E4%BB%A5%E5%8F%8A%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%AE%9E%E7%8E%B0/QQ20190312-100922.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/12/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E4%BB%A5%E5%8F%8A%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%AE%9E%E7%8E%B0/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E4%BB%A5%E5%8F%8A%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%AE%9E%E7%8E%B0/QQ20190312-105106.png">
+<meta property="article:published_time" content="2019-03-12T03:11:22.000Z">
+<meta property="article:modified_time" content="2019-03-12T04:25:02.000Z">
+<meta property="article:author" content="hcb">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/03/12/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E4%BB%A5%E5%8F%8A%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%AE%9E%E7%8E%B0/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E4%BB%A5%E5%8F%8A%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%AE%9E%E7%8E%B0/QQ20190312-100922.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/12/工厂模式以及开闭原则的实现/"/>
+
+
+
+
+
+  <title>工厂模式以及开闭原则的实现 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/12/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E4%BB%A5%E5%8F%8A%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hcb">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">工厂模式以及开闭原则的实现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-12T11:11:22+08:00">
+                2019-03-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="定义">定义</h3>
+<blockquote>
+<p>工厂模式是我们最常用的实例化对象的模式,是用工厂方法代替new的一种操作</p>
+</blockquote>
+<h3 id="需求">需求</h3>
+<blockquote>
+<p>模拟植物大战僵尸中的绿豆,蓝冰,火墙</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Bean.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bean</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"绿逗"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"发射一颗豆子"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Ice.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Ice</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"蓝冰"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"发射一颗冰豆"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Wall.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wall</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"火墙"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"稳稳的站在草地上"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Function</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String name,<span class="keyword">int</span> number)</span>  </span>&#123;</span><br><span class="line">       <span class="keyword">if</span>(<span class="string">"Bean"</span>.equls(name)&#123;</span><br><span class="line">           	Bean bean=<span class="keyword">new</span> Bean();</span><br><span class="line">           	System.out.println(<span class="string">"将"</span> + bean.getName() + <span class="string">"放在"</span> + number + <span class="string">"号草地上"</span>);</span><br><span class="line">           	bean.fight();</span><br><span class="line">       &#125;<span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"Ice"</span>.equls(name)) &#123;</span><br><span class="line">       		Ice ice= <span class="keyword">new</span> Ice();</span><br><span class="line">       		System.out.println(<span class="string">"将"</span> + ice.getName() + <span class="string">"放在"</span> + number + <span class="string">"号草地上"</span>);</span><br><span class="line">       		ice.fight();</span><br><span class="line">       &#125;<span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"Wall"</span>.equls(name))&#123;</span><br><span class="line">       		Wall wall= <span class="keyword">new</span> Wall();</span><br><span class="line">       		System.out.println(<span class="string">"将"</span> + wall.getName() + <span class="string">"放在"</span> + number + <span class="string">"号草地上"</span>);</span><br><span class="line">       		wall.fight();</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样的话,功能实现了,但是代码的复用性和可维护性太差了. 所以我们的思路是:怎么创建对象能够进行统一的逻辑处理. 所以自然而然使用接口或抽象类. 这里我们使用接口.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Plant.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Plant</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Bean.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bean</span> <span class="keyword">implements</span> <span class="title">Plant</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"绿逗"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"发射一颗豆子"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Ice.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Ice</span> <span class="keyword">implements</span> <span class="title">Plant</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"蓝冰"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"发射一颗冰豆"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Wall.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wall</span> <span class="keyword">implements</span> <span class="title">Plant</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"火墙"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"稳稳的站在草地上"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样我们的function就可以统一创建对象进行逻辑处理,不需要单独做这些事情. <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Function.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Function</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String name,<span class="keyword">int</span> number)</span></span>&#123;</span><br><span class="line">        Plant plant = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"Bean"</span>.equls(name)&#123;</span><br><span class="line">           	Plant plant =<span class="keyword">new</span> Bean();</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"Ice"</span>.equls(name)) &#123;</span><br><span class="line">        	Plant plant= <span class="keyword">new</span> Ice();</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"Wall"</span>.equls(name))&#123;</span><br><span class="line">        	Plant plant= <span class="keyword">new</span> Wall();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"将"</span> + plant.getName() + <span class="string">"放在"</span> + number + <span class="string">"号草地上"</span>);</span><br><span class="line">       	plant.fight();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> --- 到这里似乎很可以了,但还远远不够<br />
+试想,如果我们游戏升级,又加入了几种植物,那么我的Function类的判断结构必须修改,而且,如果这段代码经过改动用在其他地方,那么也需要修改.所以可维护性相当差. 这时,我们想到的是封装,只需修改一次,到处生效.<br />
+这里我们引出简单工厂的概念:就是创建对象由工厂来创建,根据参数的不同创建不同的对象. <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SimpleFactory.java</span></span><br><span class="line"><span class="comment">//这时的name为类名,使用反射技术</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Plant <span class="title">createPlantByClassName</span><span class="params">(String name)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (Plant)Class.forName(name).newInstance();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Function.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Function</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String name,<span class="keyword">int</span> number)</span></span>&#123;</span><br><span class="line">        Plant plant= SimpleFactory.createPlantByClassName(name);</span><br><span class="line">        System.out.println(<span class="string">"将"</span> + plant.getName() + <span class="string">"放在"</span> + number + <span class="string">"号草地上"</span>);</span><br><span class="line">       	plant.fight();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 这样,只要有新添加的植物,都可以由这个简单工厂生产出来.使用这个工厂,对于想要用到Plant对象的地方,不需要再关心对象的创建过程,直接用就好了,也不用关心创建过程的扩展和维护,这样可以降低耦合.</p>
+<figure>
+<img src="工厂模式以及开闭原则的实现/QQ20190312-100922.png" alt="" /><figcaption>简单工厂</figcaption>
+</figure>
+<p>简单工厂对于一般的需求来说,已经能很好地实现了.</p>
+<hr />
+<p>可是,现在又出现了新的需求 植物需要刻画地细致一些,比如,植物中有了头发,武器,果墙有了外壳.这样,我们需要创建头发,武器,外壳类,在植物中引用就可以了. <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//三个组件类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hair</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String color;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getColor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> color;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setColor</span><span class="params">(String color)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.color = color;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Arms</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String bulletType;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getBulletType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> bulletType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBulletType</span><span class="params">(String bulletType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bulletType = bulletType;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Shell</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Integer hardness;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getHardness</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> hardness;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHardness</span><span class="params">(Integer hardness)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.hardness = hardness;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//三个植物类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bean</span> <span class="keyword">implements</span> <span class="title">Plant</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Hair hair;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Arms arms;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"绿逗"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"发射一颗豆子"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Hair <span class="title">getHair</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> hair;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHair</span><span class="params">(Hair hair)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.hair = hair;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Arms <span class="title">getArms</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> arms;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setArms</span><span class="params">(Arms arms)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.arms = arms;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Ice</span> <span class="keyword">implements</span> <span class="title">Plant</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Hair hair;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Arms arms;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"蓝冰"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"发射一颗冰豆"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Hair <span class="title">getHair</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> hair;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHair</span><span class="params">(Hair hair)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.hair = hair;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Arms <span class="title">getArms</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> arms;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setArms</span><span class="params">(Arms arms)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.arms = arms;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wall</span> <span class="keyword">implements</span> <span class="title">Plant</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Wall</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Shell shell = <span class="keyword">new</span> Shell();</span><br><span class="line">        shell.setHardness(<span class="number">5</span>);</span><br><span class="line">        <span class="keyword">this</span>.shell = shell;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Shell shell;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"果墙"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"稳稳的站在草地上"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Shell <span class="title">getShell</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> shell;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setShell</span><span class="params">(Shell shell)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.shell = shell;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 这样,植物的创建过程就没有之前的那么简单了,一句创建对象的代码的反射就不能用了.<br />
+因为,每种植物加入了个性化的部分,并不是单纯实现接口中的方法.<br />
+而且,OOD中有一个很重要的原则就是开闭原则:对扩展开放,对修改关闭. 虽然我们通常做不到完全对修改关闭,但是应该竟可能做极少修改.<br />
+所以这时,我们针对每种植物创建自己的工厂.<br />
+同样,刚才是创建每种植物时为了统一逻辑处理,抽象出了植物接口.<br />
+这时,我们也应该抽象出三个工厂的接口.<br />
+代码如下: <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Factory</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Plant <span class="title">createPlant</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanFactory</span> <span class="keyword">implements</span> <span class="title">Factory</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Plant <span class="title">createPlant</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Bean bean = <span class="keyword">new</span> Bean();</span><br><span class="line">        Hair hair = <span class="keyword">new</span> Hair();</span><br><span class="line">        hair.setColor(<span class="string">"绿色"</span>);</span><br><span class="line">        bean.setHair(hair);</span><br><span class="line">        Arms arms = <span class="keyword">new</span> Arms();</span><br><span class="line">        arms.setBulletType(<span class="string">"普通的豆子"</span>);</span><br><span class="line">        bean.setArms(arms);</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IceFactory</span> <span class="keyword">implements</span> <span class="title">Factory</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Plant <span class="title">createPlant</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Ice ice = <span class="keyword">new</span> Ice();</span><br><span class="line">        Hair hair = <span class="keyword">new</span> Hair();</span><br><span class="line">        hair.setColor(<span class="string">"蓝色"</span>);</span><br><span class="line">        ice.setHair(hair);</span><br><span class="line">        Arms arms = <span class="keyword">new</span> Arms();</span><br><span class="line">        arms.setBulletType(<span class="string">"冰冻的豆子"</span>);</span><br><span class="line">        ice.setArms(arms);</span><br><span class="line">        <span class="keyword">return</span> ice;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WallFactory</span> <span class="keyword">implements</span> <span class="title">Factory</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Plant <span class="title">createPlant</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Wall wall = <span class="keyword">new</span> Wall();</span><br><span class="line">        Shell shell = <span class="keyword">new</span> Shell();</span><br><span class="line">        shell.setHardness(<span class="number">5</span>);</span><br><span class="line">        wall.setShell(shell);</span><br><span class="line">        <span class="keyword">return</span> wall;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span>  <span class="title">FactoryBuilder</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Factory <span class="title">buildByClassName</span><span class="params">(String name)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (Factory)Class.forName(name).newInstance();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Function</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String name,<span class="keyword">int</span> number)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Factory factory = FactoryBuilder.buildByClassName(name);</span><br><span class="line">        Plant plant = factory.createPlant();</span><br><span class="line">        System.out.println(<span class="string">"将"</span> + plant.getName() + <span class="string">"放在"</span> + number + <span class="string">"号草地上"</span>);</span><br><span class="line">        plant.fight();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 至此,大功告成,如果修改某一植物的创建过程,只需修改各自的工厂<br />
+如果添加植物,只需创建植物类实现Plant,创建植物工厂类实现Factory,其他代码都不需要更改,尽最大可能实现开闭原则.</p>
+<figure>
+<img src="工厂模式以及开闭原则的实现/QQ20190312-105106.png" alt="" /><figcaption>更抽象的工厂</figcaption>
+</figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/11/%E6%98%8E%E6%98%8E%E7%99%BD%E7%99%BD%E7%90%86%E8%A7%A3java%E5%A4%9A%E6%80%81%E4%B8%ADupcasting-downcasting%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" rel="next" title="明明白白理解java多态中upcasting downcasting的使用场景">
+                <i class="fa fa-chevron-left"></i> 明明白白理解java多态中upcasting downcasting的使用场景
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/24/%E4%BD%BF%E7%94%A8CGLIB%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%9F%E8%83%BD/" rel="prev" title="使用CGLIB实现动态代理功能">
+                使用CGLIB实现动态代理功能 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">hcb</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#需求"><span class="nav-number">2.</span> <span class="nav-text">需求</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hcb</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简介 alluxio ​ alluxio作为一个基于内存的分布式文件系统，为上层计算框架和底层存储系统构建了桥梁。主要功能有：  基于内存的访问方式使得吞吐量得到大幅度的性能提升，加速I &#x2F; O性能。 为分布式计算引擎提供提供了统一了数据访问的方式，以spark为例，如果数据源来自于hdfs，而数据结果保存到s3，那么只需通过配置alluxio分别与hdfs、s3的映射就可以实现统一的数据访问方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用alluxio系统对spark checkpoint机制优化">
+<meta property="og:url" content="http://yoursite.com/2019/07/06/%E4%BD%BF%E7%94%A8alluxio%E7%B3%BB%E7%BB%9F%E5%AF%B9spark-checkpoint%E6%9C%BA%E5%88%B6%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="简介 alluxio ​ alluxio作为一个基于内存的分布式文件系统，为上层计算框架和底层存储系统构建了桥梁。主要功能有：  基于内存的访问方式使得吞吐量得到大幅度的性能提升，加速I &#x2F; O性能。 为分布式计算引擎提供提供了统一了数据访问的方式，以spark为例，如果数据源来自于hdfs，而数据结果保存到s3，那么只需通过配置alluxio分别与hdfs、s3的映射就可以实现统一的数据访问方式">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2019/07/06/%E4%BD%BF%E7%94%A8alluxio%E7%B3%BB%E7%BB%9F%E5%AF%B9spark-checkpoint%E6%9C%BA%E5%88%B6%E4%BC%98%E5%8C%96/%E4%BD%BF%E7%94%A8alluxio%E7%B3%BB%E7%BB%9F%E5%AF%B9spark-checkpoint%E6%9C%BA%E5%88%B6%E4%BC%98%E5%8C%96/QQ20190706-184054.png">
+<meta property="article:published_time" content="2019-07-06T03:19:52.000Z">
+<meta property="article:modified_time" content="2019-07-06T10:52:07.000Z">
+<meta property="article:author" content="hcb">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/06/%E4%BD%BF%E7%94%A8alluxio%E7%B3%BB%E7%BB%9F%E5%AF%B9spark-checkpoint%E6%9C%BA%E5%88%B6%E4%BC%98%E5%8C%96/%E4%BD%BF%E7%94%A8alluxio%E7%B3%BB%E7%BB%9F%E5%AF%B9spark-checkpoint%E6%9C%BA%E5%88%B6%E4%BC%98%E5%8C%96/QQ20190706-184054.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/06/使用alluxio系统对spark-checkpoint机制优化/"/>
+
+
+
+
+
+  <title>使用alluxio系统对spark checkpoint机制优化 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/06/%E4%BD%BF%E7%94%A8alluxio%E7%B3%BB%E7%BB%9F%E5%AF%B9spark-checkpoint%E6%9C%BA%E5%88%B6%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hcb">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">使用alluxio系统对spark checkpoint机制优化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-06T11:19:52+08:00">
+                2019-07-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="简介">简介</h1>
+<h2 id="alluxio">alluxio</h2>
+<p>​ alluxio作为一个基于内存的分布式文件系统，为上层计算框架和底层存储系统构建了桥梁。主要功能有：</p>
+<ul>
+<li>基于内存的访问方式使得吞吐量得到大幅度的性能提升，加速I / O性能。</li>
+<li>为分布式计算引擎提供提供了统一了数据访问的方式，以spark为例，如果数据源来自于hdfs，而数据结果保存到s3，那么只需通过配置alluxio分别与hdfs、s3的映射就可以实现统一的数据访问方式，甚至应用程序都不需要知道具体的底层存储系统是什么。 使用Alluxio作为数据访问层，Spark应用程序可以透明地访问许多不同类型和持久存储服务实例中的数据（例如，AWS S3存储桶，Azure对象存储桶，远程HDFS部署等）。</li>
+<li>对于计算和数据分离的场景，alluxio对于性能的提升更加充分，尤其是当Spark部署远程数据时。</li>
+</ul>
+<h2 id="spark-checkpoint">spark checkpoint</h2>
+<p>​ 我们都知道，spark的checkpoint机制是为了容错的，所以checkpoint的数据是必须可靠存储的。对于checkpoint，spark2.4.3以及之前的版本自身所支持的可靠存储的系统必须是兼容于hdfs的，所以checkpoint数据的存取性能受限于io瓶颈的。因此，集成alluxio于checkpoint的使用，将大大提升性能，同时，alluxio2.0提供了异步地从内存向底层存储系统的备份，这样容错能保证而且不会降低性能。</p>
+<h1 id="集成">集成</h1>
+<h2 id="alluxio集群模式搭建">alluxio集群模式搭建</h2>
+<p>​ 本例子以部署单节点master,hostname为master，3结点worker,分别为slave1,slave2,slave3为例。生产环境中一定要部署HA模式。在所有的节点中进行如下操作:</p>
+<ul>
+<li><a href="https://www.alluxio.io/download/" target="_blank" rel="noopener">下载alluxio2.0</a></li>
+<li>解压</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar xzfv alluxio-2.0.0-bin.tar.gz</span><br></pre></td></tr></table></figure>
+<ul>
+<li>配置</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp conf&#x2F;alluxio-site.properties.template conf&#x2F;alluxio-site.properties</span><br></pre></td></tr></table></figure>
+<p>​ 写入以下配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">alluxio.master.hostname&#x3D;master</span><br><span class="line"># 与hdfs集成,可根据自己情况进行映射</span><br><span class="line">alluxio.master.mount.table.root.ufs&#x3D;hdfs:&#x2F;&#x2F;master:9000&#x2F;alluxio2&#x2F;root</span><br></pre></td></tr></table></figure>
+<p><code>conf/workers</code> file 填入以下内容:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">slave1</span><br><span class="line">slave2</span><br><span class="line">slave3</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>启动hdfs</p></li>
+<li><p>``` start-dfs.sh <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 格式化</span><br></pre></td></tr></table></figure> ./bin/alluxio format <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 启动</span><br></pre></td></tr></table></figure> ./bin/alluxio-start.sh all SudoMount <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 验证</span><br><span class="line"></span><br><span class="line">  访问alluxio UI http:&#x2F;&#x2F;master:19999,查看alluxio情况.</span><br><span class="line"></span><br><span class="line">  同样可以运行验证脚本</span><br></pre></td></tr></table></figure> ./bin/alluxio runTests <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">​		alluxio UI会出现&#x2F;default_tests_files文件夹,内容如下</span><br><span class="line"></span><br><span class="line">![验证页面](使用alluxio系统对spark-checkpoint机制优化&#x2F;QQ20190706-181913.png)</span><br><span class="line"></span><br><span class="line">## 与spark集成</span><br><span class="line"></span><br><span class="line">- 确保&#x2F;&lt;PATH_TO_ALLUXIO&gt;&#x2F;client&#x2F;alluxio-2.0.0-client.jar存在.</span><br><span class="line"></span><br><span class="line">- 生成spark&#x2F;conf&#x2F;spark-defaults.conf</span><br><span class="line"></span><br><span class="line">-</span><br></pre></td></tr></table></figure> cp spark-defaults.conf.template spark-defaults.conf <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 向spark&#x2F;conf&#x2F;spark-defaults.conf写入以下内容</span><br><span class="line"></span><br><span class="line">-</span><br></pre></td></tr></table></figure> spark.driver.extraClassPath /<PATH_TO_ALLUXIO>/client/alluxio-2.0.0-client.jar spark.executor.extraClassPath /<PATH_TO_ALLUXIO>/client/alluxio-2.0.0-client.jar <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  &lt;PATH_TO_ALLUXIO&gt; 为alluxio的path.</span><br><span class="line"></span><br><span class="line">- 启动yarn</span><br><span class="line"></span><br><span class="line">-</span><br></pre></td></tr></table></figure> start-yarn.sh <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 启动yarn模式下的spark-shell</span><br><span class="line"></span><br><span class="line">-</span><br></pre></td></tr></table></figure> ./bin/spark-shell --master yarn --deploy-mode client <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 生成alluxiotest文本文件上传至hdfs:&#x2F;&#x2F;master&#x2F;alluxio2&#x2F;root</span><br><span class="line"></span><br><span class="line">-</span><br></pre></td></tr></table></figure> vi alluxiotest hadoop fs put alluxio /alluxio2/root <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 测试代码</span><br><span class="line"></span><br><span class="line">  &#96;&#96;&#96;scala</span><br><span class="line">  val s &#x3D; sc.textFile(&quot;alluxio:&#x2F;&#x2F;master:19998&#x2F;alluxiotest&quot;) </span><br><span class="line">  val double &#x3D; s.map(line &#x3D;&gt; line + line)</span><br><span class="line">  double.saveAsTextFile(&quot;alluxio:&#x2F;&#x2F;master:19998&#x2F;alluxiotestOutput&quot;)</span><br></pre></td></tr></table></figure></p></li>
+<li><p>问题：</p>
+<p>​ 如果出现“NO FILESYSTEM FOR SCHEME: ALLUXIO”这种错误信息是什么原因？</p>
+<p>​ 解决办法：当你的应用（例如MapReduce、Spark）尝试以HDFS兼容文件系统接口访问Alluxio，而又无法解析alluxio://模式时会产生该异常。要确保HDFS配置文件core-site.xml（默认在hadoop安装目录，如果为Spark自定义了该文件则在spark/conf/目录下）包含以下配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>fs.alluxio.impl<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>alluxio.hadoop.FileSystem<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>​ 至此,Alluxio已经启动并运行了！你可以访问<a href="http://master:19999/" target="_blank" rel="noopener">http://master:19999</a>查看Alluxio master的运行状态，访问<a href="http://slave:30000/" target="_blank" rel="noopener">http://slave1:30000</a>查看Alluxio worker的运行状态。</p></li>
+</ul>
+<h1 id="测试checkpoint">测试checkpoint</h1>
+<ul>
+<li><p>启动yarn模式下的spark-shell</p></li>
+<li><p>``` ./bin/spark-shell --master yarn --deploy-mode client <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 测试代码</span><br><span class="line"></span><br><span class="line">- &#96;&#96;&#96;scala</span><br><span class="line">  scala&gt; sc.setCheckpointDir(&quot;alluxio:&#x2F;&#x2F;master:19998&#x2F;testCheckpoint&quot;)</span><br><span class="line">  scala&gt; val rdd1 &#x3D; sc.parallelize(Array((1,2),(3,4),(5,6),(7,8)),4)</span><br><span class="line">  scala&gt; rdd1.checkpoint()</span><br><span class="line">  scala&gt; println(&quot;输出rdd1.........&quot;+rdd1.count())</span><br></pre></td></tr></table></figure></p></li>
+<li><p>alluxio UI 的根目录结构<img src="使用alluxio系统对spark-checkpoint机制优化/QQ20190706-184054.png" alt="QQ20190706-184054" /></p></li>
+</ul>
+<h1 id="扩展">扩展</h1>
+<p>​ alluxio中alluxio-site.xml配置中可以通过配置alluxio.user.file.writetype.default 用来设置alluxio write的类型,默认为ASYNC_THROUGH,表示写入alluxio，异步写入UnderFS,这样可以实现checkpoint为persisted的状态.alluxio write的类型还有其他配置,可查阅<a href="https://docs.alluxio.io/os/user/stable/en/reference/Properties-List.html" target="_blank" rel="noopener">LIST OF CONFIGURATION PROPERTIES</a>.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/26/mac%E7%BB%88%E7%AB%AF%E4%BD%BF%E7%94%A8ss%E4%BB%A3%E7%90%86/" rel="next" title="mac终端使用ss代理">
+                <i class="fa fa-chevron-left"></i> mac终端使用ss代理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/18/JVM%E4%B8%AD%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8C%E7%89%B9%E5%BE%81%E7%AD%BE%E5%90%8D%E6%A6%82%E5%BF%B5/" rel="prev" title="JVM中描述符和特征签名概念">
+                JVM中描述符和特征签名概念 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">hcb</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#alluxio"><span class="nav-number">1.1.</span> <span class="nav-text">alluxio</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#spark-checkpoint"><span class="nav-number">1.2.</span> <span class="nav-text">spark checkpoint</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#集成"><span class="nav-number">2.</span> <span class="nav-text">集成</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#alluxio集群模式搭建"><span class="nav-number">2.1.</span> <span class="nav-text">alluxio集群模式搭建</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#测试checkpoint"><span class="nav-number">3.</span> <span class="nav-text">测试checkpoint</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#扩展"><span class="nav-number">4.</span> <span class="nav-text">扩展</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hcb</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

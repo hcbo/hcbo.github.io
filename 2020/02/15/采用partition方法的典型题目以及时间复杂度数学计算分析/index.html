@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next muse use-motion" lang="en">
+<html class="theme-next gemini use-motion" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="algorithm,时间复杂度,数学证明,partition," />
 
 
 
@@ -79,17 +79,23 @@
 
 
 
-<meta name="description" content="partition的解题思路广泛应用于将一个问题根据某一规则分割成两个子问题,是分而治之思想的一个具体实例.以下是使用partition方法的两个经典题目,以及如何计算它们的时间复杂度. partition代码 1234567891011121314151617181920212223&#x2F;&#x2F; 任意选择一个pivot,使得pivot左边的元素小于pivot,pivot右边的元素大于pivotpriva">
+<meta name="description" content="partition的解题思路广泛应用于将一个问题根据某一规则分割成两个子问题,是分而治之思想的一个具体实例.以下是使用partition方法的两个经典题目,以及如何计算它们的时间复杂度.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="采用partition方法的典型题目以及时间复杂度数学计算分析">
 <meta property="og:url" content="http://yoursite.com/2020/02/15/%E9%87%87%E7%94%A8partition%E6%96%B9%E6%B3%95%E7%9A%84%E5%85%B8%E5%9E%8B%E9%A2%98%E7%9B%AE%E4%BB%A5%E5%8F%8A%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%95%B0%E5%AD%A6%E8%AE%A1%E7%AE%97%E5%88%86%E6%9E%90/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="partition的解题思路广泛应用于将一个问题根据某一规则分割成两个子问题,是分而治之思想的一个具体实例.以下是使用partition方法的两个经典题目,以及如何计算它们的时间复杂度. partition代码 1234567891011121314151617181920212223&#x2F;&#x2F; 任意选择一个pivot,使得pivot左边的元素小于pivot,pivot右边的元素大于pivotpriva">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-02-14T18:58:23.000Z">
-<meta property="article:modified_time" content="2020-02-14T22:09:28.000Z">
+<meta property="og:site_name" content="hcb的技术空间">
+<meta property="og:description" content="partition的解题思路广泛应用于将一个问题根据某一规则分割成两个子问题,是分而治之思想的一个具体实例.以下是使用partition方法的两个经典题目,以及如何计算它们的时间复杂度.">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E9%87%87%E7%94%A8partition%E6%96%B9%E6%B3%95%E7%9A%84%E5%85%B8%E5%9E%8B%E9%A2%98%E7%9B%AE%E4%BB%A5%E5%8F%8A%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%95%B0%E5%AD%A6%E8%AE%A1%E7%AE%97%E5%88%86%E6%9E%90/rendered_image.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E9%87%87%E7%94%A8partition%E6%96%B9%E6%B3%95%E7%9A%84%E5%85%B8%E5%9E%8B%E9%A2%98%E7%9B%AE%E4%BB%A5%E5%8F%8A%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%95%B0%E5%AD%A6%E8%AE%A1%E7%AE%97%E5%88%86%E6%9E%90/rendered_image1.png">
+<meta property="article:published_time" content="2020-02-15T02:58:23.000Z">
+<meta property="article:modified_time" content="2020-02-15T17:56:38.000Z">
 <meta property="article:author" content="hcb">
+<meta property="article:tag" content="algorithm">
+<meta property="article:tag" content="时间复杂度">
+<meta property="article:tag" content="数学证明">
+<meta property="article:tag" content="partition">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/02/15/%E9%87%87%E7%94%A8partition%E6%96%B9%E6%B3%95%E7%9A%84%E5%85%B8%E5%9E%8B%E9%A2%98%E7%9B%AE%E4%BB%A5%E5%8F%8A%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%95%B0%E5%AD%A6%E8%AE%A1%E7%AE%97%E5%88%86%E6%9E%90/rendered_image.png">
 
 
 
@@ -97,7 +103,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Muse',
+    scheme: 'Gemini',
     version: '5.1.4',
     sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
@@ -105,7 +111,7 @@
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     duoshuo: {
       userId: '0',
-      author: 'Author'
+      author: '博主'
     },
     algolia: {
       applicationID: '',
@@ -125,7 +131,7 @@
 
 
 
-  <title>采用partition方法的典型题目以及时间复杂度数学计算分析 | Hexo</title>
+  <title>采用partition方法的典型题目以及时间复杂度数学计算分析 | hcb的技术空间</title>
   
 
 
@@ -137,7 +143,7 @@
 
 <meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
   
   
@@ -155,7 +161,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Hexo</span>
+        <span class="site-title">hcb的技术空间</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -181,21 +187,41 @@
       
         
         <li class="menu-item menu-item-home">
-          <a href="/%20" rel="section">
+          <a href="/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Home
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
           </a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives/%20" rel="section">
+          <a href="/archives/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
             
-            Archives
+            归档
           </a>
         </li>
       
@@ -237,11 +263,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="hcb">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/batman.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="hcb的技术空间">
     </span>
 
     
@@ -259,9 +285,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-15T02:58:23+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-15T10:58:23+08:00">
                 2020-02-15
               </time>
             
@@ -271,6 +297,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -300,6 +348,7 @@
 
       
         <p>partition的解题思路广泛应用于将一个问题根据某一规则分割成两个子问题,是分而治之思想的一个具体实例.以下是使用partition方法的两个经典题目,以及如何计算它们的时间复杂度.</p>
+<p><strong><a id="more"></a></strong></p>
 <h3 id="partition代码">partition代码</h3>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 任意选择一个pivot,使得pivot左边的元素小于pivot,pivot右边的元素大于pivot</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">partition</span><span class="params">(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index = start + (<span class="keyword">int</span>)(Math.random() * (end-start));</span><br><span class="line">        swap(arr,index,end);</span><br><span class="line">        <span class="keyword">int</span> small = start-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span>(index = start;index&lt;end;++index)&#123;</span><br><span class="line">            <span class="keyword">if</span>(arr[index]&lt;arr[end])&#123;</span><br><span class="line">                ++small;</span><br><span class="line">                <span class="keyword">if</span>(small != index)&#123;</span><br><span class="line">                    swap(arr,index,small);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ++small;</span><br><span class="line">        swap(arr,small,end);</span><br><span class="line">        <span class="keyword">return</span> small;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> temp = arr[i];</span><br><span class="line">        arr[i] = arr[j];</span><br><span class="line">        arr[j] = temp;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <h2 id="快速排序">快速排序</h2>
@@ -311,8 +360,10 @@
 <h4 id="最好情况">最好情况</h4>
 <p>最好情况是每次选择的pivot元素正好位于中间位置,这时时间复杂度的计算过程如下:</p>
 <ul>
-<li><p>其递推公式为 $$</p>
-<p>$$</p></li>
+<li><p>其递推公式为</p>
+<figure>
+<img src="rendered_image.png" alt="" /><figcaption>最好情况的递推公式</figcaption>
+</figure></li>
 <li><p>其中，O(n)为一次partition所需要的时间，设为cn。因此： <span class="math display">\[
 \begin{aligned}
 T(n) &amp;=2 T\left(\frac{n}{2}\right)+c n=2\left(2 T\left(\frac{n}{4}\right)+\frac{c n}{2}\right)+c n=2^{2} T\left(\frac{n}{4}\right)+2 c n \\
@@ -334,8 +385,10 @@ T(n)&amp;=n+(n-1)+(n-2)+\ldots+1\\
 <h4 id="平均情况">平均情况</h4>
 <p>设pivot按大小顺序所在的位置为i,那么左边部分有i个元素,右边部分有n-1-i个元素,因此</p>
 <ul>
-<li><p>其递推公式为 $$</p>
-<p>$$</p></li>
+<li><p>其递推公式为</p>
+<figure>
+<img src="rendered_image1.png" alt="" /><figcaption>rendered_image1</figcaption>
+</figure></li>
 <li><p>随机选取的pivot元素出现在序列的每个位置的概率都是均等的,都是1/n,因此T(i)的平均值为<span class="math inline">\(\frac{1}{n}\sum_{j=0}^{n-1}T(j)\)</span> ,同样,n-1-i的取值也是每个位置的概率是均等的,因此T(n-1-i)的平均值也为<span class="math inline">\(\frac{1}{n}\sum_{j=0}^{n-1}T(j)\)</span>,因此 <span class="math display">\[
 T(n)=\frac{2}{n}\left[\sum_{j=0}^{n-1} T(j)\right]+c n
 \]</span> 两边同乘n得 <span class="math display">\[
@@ -416,6 +469,18 @@ T(n) &amp;=n+\frac{n}{2}+\frac{n}{2^{2}}+\frac{n}{2^{3}} +\ldots+\frac{n}{2^{k}}
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/algorithm/" rel="tag"># algorithm</a>
+          
+            <a href="/tags/%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/" rel="tag"># 时间复杂度</a>
+          
+            <a href="/tags/%E6%95%B0%E5%AD%A6%E8%AF%81%E6%98%8E/" rel="tag"># 数学证明</a>
+          
+            <a href="/tags/partition/" rel="tag"># partition</a>
+          
+        </div>
+      
 
       
       
@@ -425,8 +490,8 @@ T(n) &amp;=n+\frac{n}{2}+\frac{n}{2^{2}}+\frac{n}{2^{3}} +\ldots+\frac{n}{2^{k}}
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/02/12/%E5%85%A8%E6%8E%92%E5%88%97%E9%97%AE%E9%A2%98/" rel="next" title="全排列以及一些扩展">
-                <i class="fa fa-chevron-left"></i> 全排列以及一些扩展
+              <a href="/2020/02/13/%E5%85%A8%E6%8E%92%E5%88%97%E9%97%AE%E9%A2%98/" rel="next" title="全排列以及相似问题扩展">
+                <i class="fa fa-chevron-left"></i> 全排列以及相似问题扩展
               </a>
             
           </div>
@@ -434,10 +499,6 @@ T(n) &amp;=n+\frac{n}{2}+\frac{n}{2^{2}}+\frac{n}{2^{3}} +\ldots+\frac{n}{2^{k}}
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/02/15/test/" rel="prev" title="test">
-                test <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -491,10 +552,10 @@ T(n) &amp;=n+\frac{n}{2}+\frac{n}{2^{2}}+\frac{n}{2^{3}} +\ldots+\frac{n}{2^{k}}
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
+            文章目录
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
+            站点概览
           </li>
         </ul>
       
@@ -502,6 +563,10 @@ T(n) &amp;=n+\frac{n}{2}+\frac{n}{2^{2}}+\frac{n}{2^{3}} +\ldots+\frac{n}{2^{k}}
       <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/batman.jpg"
+                alt="hcb" />
             
               <p class="site-author-name" itemprop="name">hcb</p>
               <p class="site-description motion-element" itemprop="description"></p>
@@ -512,16 +577,34 @@ T(n) &amp;=n+\frac{n}{2}+\frac{n}{2^{2}}+\frac{n}{2^{3}} +\ldots+\frac{n}{2^{k}}
             
               <div class="site-state-item site-state-posts">
               
-                <a href="/archives/%20%7C%7C%20archive">
+                <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
-                  <span class="site-state-item-name">posts</span>
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
                 </a>
               </div>
             
 
             
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
 
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
             
 
           </nav>
@@ -531,6 +614,12 @@ T(n) &amp;=n+\frac{n}{2}+\frac{n}{2^{2}}+\frac{n}{2^{3}} +\ldots+\frac{n}{2^{k}}
           
 
           
+          
+            <div class="cc-license motion-element" itemprop="license">
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" class="cc-opacity" target="_blank">
+                <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+              </a>
+            </div>
           
 
           
@@ -581,7 +670,7 @@ T(n) &amp;=n+\frac{n}{2}+\frac{n}{2^{2}}+\frac{n}{2^{3}} +\ldots+\frac{n}{2^{k}}
 </div>
 
 
-  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow noreferrer">Hexo</a> 强力驱动</div>
 
 
 
@@ -589,7 +678,7 @@ T(n) &amp;=n+\frac{n}{2}+\frac{n}{2^{2}}+\frac{n}{2^{3}} +\ldots+\frac{n}{2^{k}}
 
 
 
-  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next" rel="external nofollow noreferrer">NexT.Gemini</a> v5.1.4</div>
 
 
 
@@ -688,6 +777,13 @@ T(n) &amp;=n+\frac{n}{2}+\frac{n}{2^{2}}+\frac{n}{2^{3}} +\ldots+\frac{n}{2^{k}}
 
   
   
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
 
   
   <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>

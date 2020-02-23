@@ -847,6 +847,227 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/24/Mac%E7%B3%BB%E7%BB%9F%E4%B8%8B%E5%9C%A8IDEA%E9%85%8D%E7%BD%AEKafka%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BF%AE%E6%94%B9%E7%8E%AF%E5%A2%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hcb">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/batman.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hcb的技术空间">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/24/Mac%E7%B3%BB%E7%BB%9F%E4%B8%8B%E5%9C%A8IDEA%E9%85%8D%E7%BD%AEKafka%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BF%AE%E6%94%B9%E7%8E%AF%E5%A2%83/" itemprop="url">Mac系统下在IDEA配置Kafka2.3.0源码阅读修改环境</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-23T18:11:41Z">
+                2019-04-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">kafka</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="环境">环境</h2>
+<ul>
+<li>Java 8
+<ul>
+<li>本机版本<code>java version "1.8.0_141"</code></li>
+</ul></li>
+<li>Gradle 5.0 or higher
+<ul>
+<li>本机版本<code>Gradle 5.4.1</code></li>
+</ul></li>
+<li>默认Scala 2.12,但也可以通过自定义的方式使用其他的scala版本.
+<ul>
+<li>本机版本<code>Scala code runner version 2.12.8</code></li>
+</ul></li>
+<li>IDEA scala插件
+<ul>
+<li>本机版本 <code>v2018.3.7</code></li>
+</ul></li>
+</ul>
+<h2 id="将代码导入到idea">将代码导入到IDEA</h2>
+<ul>
+<li><p>将代码克隆到当前文件夹</p>
+<p><code>git clone -b 2.3.0 https://github.com/apache/kafka.git</code></p></li>
+<li><p>在下载的项目根目录下执行gradle的idea task</p>
+<p><code>gradle idea</code></p></li>
+</ul>
+<h2 id="通过代码编译执行启动kafka服务">通过代码编译执行启动kafka服务</h2>
+<ul>
+<li><p>kafka服务需要zookeeper管理元数据,kafka服务的启动所以需要有zookeeper服务运行作为保证,zookeeper服务的ip:port需要配置到<code>config/server.properties</code>.</p></li>
+<li><p>kafka的消息是以日志文件的形式存储的,所以还需要配置消息日志的存储路径</p></li>
+<li><p>本机<code>config/server.properties</code>添加的配置如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">log.dirs&#x3D;&#x2F;Volumes&#x2F;Macintosh\ HD&#x2F;teacher_project&#x2F;kafka230_logDir&#x2F;kafka_logs</span><br><span class="line">zookeeper.connect&#x3D;kafka:2181</span><br></pre></td></tr></table></figure></li>
+<li><p>编辑启动配置项</p>
+<figure>
+<img src="WX20200223-223106.png" alt="" /><figcaption>kafka服务程序配置</figcaption>
+</figure></li>
+<li><p>启动kafka服务程序</p>
+<figure>
+<img src="WX20200223-223426.png" alt="" /><figcaption>启动</figcaption>
+</figure></li>
+</ul>
+<h2 id="排坑">排坑</h2>
+<h3 id="org.apache.kafka.common.message不存在">org.apache.kafka.common.message不存在</h3>
+<p>启动的build过程中,会出现org.apache.kafka.common.message不存在的Error.新版kafka将request和response的格式类改成自动生成了,所以缺少<code>org.apache.kafka.common.message</code>这个package,因此需要执行gradle的jarall task (<a href="https://time.geekbang.org/column/article/120099" target="_blank" rel="noopener external nofollow noreferrer">参考</a>),生成的message包会以generated包的形式存在,将生成的message包移动到<code>org.apache.kafka.common</code>的位置.</p>
+<p><code>gradle jarall</code></p>
+<h3 id="java.lang.stackoverflowerror">java.lang.stackOverflowError</h3>
+<p>启动的build过程中,会出现java.lang.stackOverflowError</p>
+<figure>
+<img src="WX20200222-184042.png" alt="" /><figcaption>stackOverflowError</figcaption>
+</figure>
+<p>这是因为javac的编译检查设置造成的,比如范型使用不规范会出现这个问题,这个问题通过修改java compiler的配置解决</p>
+<figure>
+<img src="WX20200223-224425.png" alt="" /><figcaption>配置</figcaption>
+</figure>
+<h3 id="failed-to-load-class-org.slf4j.impl.staticloggerbinder">Failed to load class "org.slf4j.impl.StaticLoggerBinder"</h3>
+<p>提示:https://www.slf4j.org/codes.html#StaticLoggerBinder</p>
+<p>这是由于没有slf4j的实现jar包.解决方式为将<code>slf4j-log4j12.jar</code>加入到core/main的dependency中.</p>
+<figure>
+<img src="WX20200223-225910.png" alt="" /><figcaption>加入log4j的依赖</figcaption>
+</figure>
+<h3 id="log4jwarn-no-appenders-could-be-found-for-logger">log4j:WARN No appenders could be found for logger</h3>
+<p>由于没有log的配置文件,将<code>config/log4j.properties</code>分别复制到<code>core/src/main/scala</code>和<code>core/out/production/classes</code>中</p>
+<figure>
+<img src="WX20200223-230502.png" alt="" /><figcaption>复制log4j.properties</figcaption>
+</figure>
+<h3 id="log4jerror-setfilenulltrue-call-failed.">log4j:ERROR setFile(null,true) call failed.</h3>
+<p><code>java.io.FileNotFoundException: /logs/server.log</code></p>
+<p>这是由于未能找到日志的输出路径. <code>log4j.propertties</code>中的这种配置<code>log4j.appender.stateChangeAppender.File=${kafka.logs.dir}/logs/state-change.log</code>,得不到<code>${kafka.logs.dir}</code>,有两种解决方式:</p>
+<ul>
+<li><p>可以将<code>${kafka.logs.dir}</code>改成绝对路径</p></li>
+<li><p>通过配置启动项的方式,将kafka.logs.dir的值加入到vm的参数中(<a href="https://stackoverflow.com/questions/5751851/whats-the-difference-between-program-arguments-and-vm-arguments" target="_blank" rel="noopener external nofollow noreferrer">参考</a>)</p>
+<blockquote>
+<p>-D<em>property</em>=<em>value</em></p>
+<p>Sets a system property value. The <em>property</em> variable is a string with no spaces that represents the name of the property. The <em>value</em> variable is a string that represents the value of the property. If <em>value</em> is a string with spaces, then enclose it in quotation marks (for example <code>-Dfoo="foo bar"</code>).</p>
+<p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html" target="_blank" rel="noopener external nofollow noreferrer">参考</a></p>
+</blockquote>
+<figure>
+<img src="WX20200224-000029.png" alt="" /><figcaption>VM options</figcaption>
+</figure></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/25/%E4%BD%BF%E7%94%A8CGLIB%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%9F%E8%83%BD/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1593,133 +1814,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/01/%E5%85%B3%E4%BA%8Eservlet%E9%85%8D%E7%BD%AE%E8%A7%A3%E5%86%B3404%E7%9A%84%E9%97%AE%E9%A2%98-idea/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="hcb">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/batman.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="hcb的技术空间">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/01/%E5%85%B3%E4%BA%8Eservlet%E9%85%8D%E7%BD%AE%E8%A7%A3%E5%86%B3404%E7%9A%84%E9%97%AE%E9%A2%98-idea/" itemprop="url">关于servlet配置解决404的问题(idea)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-01T15:37:47Z">
-                2018-03-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p><a href="https://blog.csdn.net/WinstonLau/article/details/80239271" target="_blank" rel="noopener external nofollow noreferrer">idea中Java Web项目的访问路径问题</a></p>
-</blockquote>
-<p><strong>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/03/01/%E5%85%B3%E4%BA%8Eservlet%E9%85%8D%E7%BD%AE%E8%A7%A3%E5%86%B3404%E7%9A%84%E9%97%AE%E9%A2%98-idea/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1773,7 +1867,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1784,7 +1878,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1795,7 +1889,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

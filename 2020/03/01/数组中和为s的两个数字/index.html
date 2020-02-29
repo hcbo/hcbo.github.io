@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="virtualbox,虚拟机," />
+  <meta name="keywords" content="algorithm," />
 
 
 
@@ -79,25 +79,17 @@
 
 
 
-<meta name="description" content="网络配置 虚拟机的网卡1通过nat连接外网,网卡2和主机互联">
+<meta name="description" content="题目描述 输入一个递增排序的数组和一个数字 S，在数组中查找两个数，使得他们的和正好是 S。如果有多对数字的和等于 S，输出任意一对。例如，输入数组{1,2,4,7,11,15}和数字15。由于4+11&#x3D;15，因此输出4和11。 思路一 首先想到的就是每次固定一个,然后遍历数组,这样的时间复杂度为\(O(n^2)\).">
 <meta property="og:type" content="article">
-<meta property="og:title" content="virtualbox同时实现上网和本地ping通(mac)">
-<meta property="og:url" content="http://yoursite.com/2018/01/05/virtualbox%E5%90%8C%E6%97%B6%E5%AE%9E%E7%8E%B0%E4%B8%8A%E7%BD%91%E5%92%8C%E6%9C%AC%E5%9C%B0ping%E9%80%9A-mac/index.html">
+<meta property="og:title" content="数组中和为s的两个数字">
+<meta property="og:url" content="http://yoursite.com/2020/03/01/%E6%95%B0%E7%BB%84%E4%B8%AD%E5%92%8C%E4%B8%BAs%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97/index.html">
 <meta property="og:site_name" content="hcb的技术空间">
-<meta property="og:description" content="网络配置 虚拟机的网卡1通过nat连接外网,网卡2和主机互联">
-<meta property="og:image" content="http://yoursite.com/2018/01/05/virtualbox%E5%90%8C%E6%97%B6%E5%AE%9E%E7%8E%B0%E4%B8%8A%E7%BD%91%E5%92%8C%E6%9C%AC%E5%9C%B0ping%E9%80%9A-mac/QQ20190305-085813.png">
-<meta property="og:image" content="http://yoursite.com/2018/01/05/virtualbox%E5%90%8C%E6%97%B6%E5%AE%9E%E7%8E%B0%E4%B8%8A%E7%BD%91%E5%92%8C%E6%9C%AC%E5%9C%B0ping%E9%80%9A-mac/QQ20190305-085838.png">
-<meta property="og:image" content="http://yoursite.com/2018/01/05/virtualbox%E5%90%8C%E6%97%B6%E5%AE%9E%E7%8E%B0%E4%B8%8A%E7%BD%91%E5%92%8C%E6%9C%AC%E5%9C%B0ping%E9%80%9A-mac/QQ20190305-090113.png">
-<meta property="og:image" content="http://yoursite.com/2018/01/05/virtualbox%E5%90%8C%E6%97%B6%E5%AE%9E%E7%8E%B0%E4%B8%8A%E7%BD%91%E5%92%8C%E6%9C%AC%E5%9C%B0ping%E9%80%9A-mac/QQ20190305-090159.png">
-<meta property="og:image" content="http://yoursite.com/2018/01/05/virtualbox%E5%90%8C%E6%97%B6%E5%AE%9E%E7%8E%B0%E4%B8%8A%E7%BD%91%E5%92%8C%E6%9C%AC%E5%9C%B0ping%E9%80%9A-mac/QQ20190305-090252.png">
-<meta property="og:image" content="http://yoursite.com/2018/01/05/virtualbox%E5%90%8C%E6%97%B6%E5%AE%9E%E7%8E%B0%E4%B8%8A%E7%BD%91%E5%92%8C%E6%9C%AC%E5%9C%B0ping%E9%80%9A-mac/QQ20190305-090323.png">
-<meta property="article:published_time" content="2018-01-05T08:55:36.000Z">
-<meta property="article:modified_time" content="2020-02-15T18:25:55.000Z">
+<meta property="og:description" content="题目描述 输入一个递增排序的数组和一个数字 S，在数组中查找两个数，使得他们的和正好是 S。如果有多对数字的和等于 S，输出任意一对。例如，输入数组{1,2,4,7,11,15}和数字15。由于4+11&#x3D;15，因此输出4和11。 思路一 首先想到的就是每次固定一个,然后遍历数组,这样的时间复杂度为\(O(n^2)\).">
+<meta property="article:published_time" content="2020-02-29T18:15:34.000Z">
+<meta property="article:modified_time" content="2020-02-29T10:35:22.000Z">
 <meta property="article:author" content="hcb">
-<meta property="article:tag" content="virtualbox">
-<meta property="article:tag" content="虚拟机">
+<meta property="article:tag" content="algorithm">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2018/01/05/virtualbox%E5%90%8C%E6%97%B6%E5%AE%9E%E7%8E%B0%E4%B8%8A%E7%BD%91%E5%92%8C%E6%9C%AC%E5%9C%B0ping%E9%80%9A-mac/QQ20190305-085813.png">
 
 
 
@@ -127,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/01/05/virtualbox同时实现上网和本地ping通-mac/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/03/01/数组中和为s的两个数字/"/>
 
 
 
 
 
-  <title>virtualbox同时实现上网和本地ping通(mac) | hcb的技术空间</title>
+  <title>数组中和为s的两个数字 | hcb的技术空间</title>
   
 
 
@@ -260,7 +252,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/05/virtualbox%E5%90%8C%E6%97%B6%E5%AE%9E%E7%8E%B0%E4%B8%8A%E7%BD%91%E5%92%8C%E6%9C%AC%E5%9C%B0ping%E9%80%9A-mac/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/01/%E6%95%B0%E7%BB%84%E4%B8%AD%E5%92%8C%E4%B8%BAs%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="hcb">
@@ -277,7 +269,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">virtualbox同时实现上网和本地ping通(mac)</h1>
+          <h1 class="post-title" itemprop="name headline">数组中和为s的两个数字</h1>
         
 
         <div class="post-meta">
@@ -289,8 +281,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-05T16:55:36+08:00">
-                2018-01-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-01T02:15:34+08:00">
+                2020-02-29
               </time>
             
 
@@ -312,8 +304,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index">
-                    <span itemprop="name">系统</span>
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
                   </a>
                 </span>
 
@@ -349,31 +341,20 @@
       
 
       
-        <h3 id="网络配置">网络配置</h3>
-<p>虚拟机的网卡1通过nat连接外网,网卡2和主机互联</p>
+        <h2 id="题目描述">题目描述</h2>
+<p>输入一个递增排序的数组和一个数字 S，在数组中查找两个数，使得他们的和正好是 S。如果有多对数字的和等于 S，输出任意一对。例如，输入数组{1,2,4,7,11,15}和数字15。由于4+11=15，因此输出4和11。</p>
+<h2 id="思路一">思路一</h2>
+<p>首先想到的就是每次固定一个,然后遍历数组,这样的时间复杂度为<span class="math inline">\(O(n^2)\)</span>.</p>
 <p><strong><a id="more"></a></strong></p>
-<figure>
-<img src="QQ20190305-085813.png" alt="" /><figcaption>网卡1配置</figcaption>
-</figure>
-<figure>
-<img src="QQ20190305-085838.png" alt="" /><figcaption>网卡二配置</figcaption>
-</figure>
-<h3 id="网络状况">网络状况</h3>
-<h4 id="虚拟机ubuntu14ip">虚拟机(Ubuntu14)ip</h4>
-<figure>
-<img src="QQ20190305-090113.png" alt="" /><figcaption>虚拟机的ip情况</figcaption>
-</figure>
-<h4 id="mac-ip">mac ip</h4>
-<figure>
-<img src="QQ20190305-090159.png" alt="" /><figcaption>mac会多出一个网卡</figcaption>
-</figure>
-<h4 id="互相ping">互相ping</h4>
-<figure>
-<img src="QQ20190305-090252.png" alt="" /><figcaption>mac ping虚拟机</figcaption>
-</figure>
-<figure>
-<img src="QQ20190305-090323.png" alt="" /><figcaption>虚拟机ping主机</figcaption>
-</figure>
+<h2 id="思路二">思路二</h2>
+<p>进一步,如果不想每次到一个元素的时候,遍历整个数组,只有把之前遍历过元素的存储到一个容器中,最有查找效率的容器是哈希表,具有O(1)的查找效率,这样我们使用O(n)的空间复杂代价,来将时间代价减小到O(n).</p>
+<h3 id="代码实现">代码实现</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getNumInSumHash</span><span class="params">(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> sum)</span> </span>&#123;</span><br><span class="line">        HashSet&lt;Integer&gt; hs = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> elem:</span><br><span class="line">            arr ) &#123;</span><br><span class="line">            <span class="keyword">if</span>(hs.contains(sum-elem))&#123;</span><br><span class="line">                System.out.println(sum-elem + <span class="string">" "</span> + elem);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            hs.add(elem);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>但是,我们没有使用到数组的元素递增的特征.</p>
+<h2 id="思路三">思路三</h2>
+<p>维持两个指针,向中间遍历.</p>
+<h3 id="代码">代码</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hcb.algorithm.chapter6;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sword57</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        getNumInSum(<span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">11</span>,<span class="number">15</span>&#125;,<span class="number">11</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getNumInSum</span><span class="params">(<span class="keyword">int</span>[] arr,<span class="keyword">int</span> sum)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//arr[left]维持 可能成为结果值中的最小值</span></span><br><span class="line">        <span class="comment">// arr[right]维持 可能成为结果值中的最大值</span></span><br><span class="line">        <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> right = arr.length-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(left&lt;right)&#123;</span><br><span class="line">            <span class="keyword">if</span>(arr[left]+arr[right] == sum)&#123;</span><br><span class="line">                System.out.println(arr[left]+<span class="string">" "</span>+arr[right]);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(arr[left]+arr[right] &gt; sum)&#123;</span><br><span class="line">                <span class="comment">// arr[right]与当前最小值的和都大于sum,那么arr[right]与其他值的和更大于sum,所以将</span></span><br><span class="line">                <span class="comment">//arr[right]排除.</span></span><br><span class="line">                right--;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// arr[left]与当前最大值的和都小于sum,那么arr[left]与其他值的和更小于sum,所以将</span></span><br><span class="line">                <span class="comment">//arr[left]排除.</span></span><br><span class="line">                left++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -391,9 +372,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/virtualbox/" rel="tag"># virtualbox</a>
-          
-            <a href="/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/" rel="tag"># 虚拟机</a>
+            <a href="/tags/algorithm/" rel="tag"># algorithm</a>
           
         </div>
       
@@ -406,15 +385,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2020/02/21/%E8%A7%A3%E5%86%B3%E9%80%92%E5%BD%92%E9%80%A0%E6%88%90%E9%87%8D%E5%A4%8D%E8%AE%A1%E7%AE%97%E7%9A%84%E8%BF%99%E7%B1%BB%E9%97%AE%E9%A2%98/" rel="next" title="解决递归造成重复计算的这类问题">
+                <i class="fa fa-chevron-left"></i> 解决递归造成重复计算的这类问题
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/03/01/%E5%85%B3%E4%BA%8Eservlet%E9%85%8D%E7%BD%AE%E8%A7%A3%E5%86%B3404%E7%9A%84%E9%97%AE%E9%A2%98-idea/" rel="prev" title="关于servlet配置解决404的问题(idea)">
-                关于servlet配置解决404的问题(idea) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -556,7 +535,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#网络配置"><span class="nav-number">1.</span> <span class="nav-text">网络配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络状况"><span class="nav-number">2.</span> <span class="nav-text">网络状况</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟机ubuntu14ip"><span class="nav-number">2.1.</span> <span class="nav-text">虚拟机(Ubuntu14)ip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mac-ip"><span class="nav-number">2.2.</span> <span class="nav-text">mac ip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#互相ping"><span class="nav-number">2.3.</span> <span class="nav-text">互相ping</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目描述"><span class="nav-number">1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思路一"><span class="nav-number">2.</span> <span class="nav-text">思路一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思路二"><span class="nav-number">3.</span> <span class="nav-text">思路二</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现"><span class="nav-number">3.1.</span> <span class="nav-text">代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思路三"><span class="nav-number">4.</span> <span class="nav-text">思路三</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#代码"><span class="nav-number">4.1.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -710,7 +689,7 @@
   
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
 
 
 
@@ -763,6 +742,26 @@
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 

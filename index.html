@@ -1192,6 +1192,187 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/06/%E7%94%B1class-not-found-%E5%BC%95%E5%87%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hcb">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/batman.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hcb的技术空间">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/11/06/%E7%94%B1class-not-found-%E5%BC%95%E5%87%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E9%97%AE%E9%A2%98/" itemprop="url">由class not found 引出的类加载器问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-06T13:47:22Z">
+                2019-11-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在开发Alluxio的扩展底层存储时,要用到Kafka的client依赖,在KafkaProducer创建时,需要去加载<code>org.apache.kafka.common.serialization.StringSerializer</code>这个类,但是报出错误</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.apache.kafka.common.config.ConfigException: Invalid value org.apache.kafka.common.serialization.StringSerializer for configuration key.serializer: Class org.apache.kafka.common.serialization.StringSerializer could not be found</span><br></pre></td></tr></table></figure>
+<p>这个类明明在classpath中,为什么提示找不到呢?通过查找资料,这个问题是类加载器的问题.</p>
+<h2 id="类加载器">类加载器</h2>
+<blockquote>
+<p>​ 虚拟机设计团队把类加载阶段中的“通过一个类的全限定名来获取描述此类的二进制字节流”这个动作放到java虚拟机外部去实现，以便让应用程序自已决定如何去获取所需要的类。实现这个动作的代码模块称为“类加载器”.</p>
+<p>​ 对于任意一个类，都需要由加载它的类加载器和这个类本身一同确立其在Java虚拟机中的唯一性，每一个类加载器，都拥有一个独立的类名称空间。这句话可以表达得更通俗一些:比较两个类是否“相等”，只有在这两个类是由同一个类加载器加载的前提下才有意义，否则，即使这两个类来源于同一个Class文件，被同一个虚拟机加载，只要加载它们的类加载器不同，那这两个类就必定不相等.</p>
+</blockquote>
+<h2 id="问题探究">问题探究</h2>
+<h3 id="异常栈分析">异常栈分析</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">org.apache.kafka.common.config.ConfigException: Invalid value org.apache.kafka.common.serialization.StringSerializer for configuration key.serializer: Class org.apache.kafka.common.serialization.StringSerializer could not be found.</span><br><span class="line">	at org.apache.kafka.common.config.ConfigDef.parseType(ConfigDef.java:718)</span><br><span class="line">	at org.apache.kafka.common.config.ConfigDef.parseValue(ConfigDef.java:471)</span><br><span class="line">	at org.apache.kafka.common.config.ConfigDef.parse(ConfigDef.java:464)</span><br><span class="line">	at org.apache.kafka.common.config.AbstractConfig.&lt;init&gt;(AbstractConfig.java:62)</span><br><span class="line">	at org.apache.kafka.common.config.AbstractConfig.&lt;init&gt;(AbstractConfig.java:75)</span><br><span class="line">	at org.apache.kafka.clients.producer.ProducerConfig.&lt;init&gt;(ProducerConfig.java:392)</span><br><span class="line">	at org.apache.kafka.clients.producer.KafkaProducer.&lt;init&gt;(KafkaProducer.java:301)</span><br><span class="line">	at alluxio.underfs.neu.NeuUnderFileSystem.create(NeuUnderFileSystem.java:146)</span><br><span class="line">	at alluxio.underfs.ConsistentUnderFileSystem.createNonexistingFile(ConsistentUnderFileSystem.java:46)</span><br><span class="line">	at alluxio.underfs.UnderFileSystemWithLogging$8.call(UnderFileSystemWithLogging.java:194)</span><br><span class="line">	at alluxio.underfs.UnderFileSystemWithLogging$8.call(UnderFileSystemWithLogging.java:191)</span><br><span class="line">	at alluxio.underfs.UnderFileSystemWithLogging.call(UnderFileSystemWithLogging.java:949)</span><br><span class="line">	at alluxio.underfs.UnderFileSystemWithLogging.createNonexistingFile(UnderFileSystemWithLogging.java:191)</span><br><span class="line">	at alluxio.job.persist.PersistDefinition.runTask(PersistDefinition.java:173)</span><br><span class="line">	at alluxio.job.persist.PersistDefinition.runTask(PersistDefinition.java:58)</span><br><span class="line">	at alluxio.worker.job.task.TaskExecutor.run(TaskExecutor.java:77)</span><br><span class="line">	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)</span><br><span class="line">	at java.util.concurrent.FutureTask.run(FutureTask.java:266)</span><br><span class="line">	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)</span><br><span class="line">	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)</span><br><span class="line">	at java.lang.Thread.run(Thread.java:748)</span><br></pre></td></tr></table></figure>
+<p>可见该异常是Alluxio启动线程池中的线程执行我写的<code>NeuUnderFileSystem.create()</code>方法时发生的.</p>
+<p>发生位置的代码如下</p>
+<figure>
+<img src="QQ20200306-0.png" alt="" /><figcaption>异常位置</figcaption>
+</figure>
+<p>进一步<code>Utils.getContextOrKafkaClassLoader()</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Get the Context ClassLoader on this thread or, if not present, the ClassLoader that</span></span><br><span class="line"><span class="comment">     * loaded Kafka.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * This should be used whenever passing a ClassLoader to Class.forName</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ClassLoader <span class="title">getContextOrKafkaClassLoader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ClassLoader cl = Thread.currentThread().getContextClassLoader();</span><br><span class="line">        <span class="keyword">if</span> (cl == <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">return</span> getKafkaClassLoader();</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> cl;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>通过调试,得到执行此方法的线程上下文类加载器为<code>sun.misc.Launcher$AppClassLoader@55f96302</code> ,它是jvm的系统类加载器.也就是说,将<code>AppClassLoader</code>作为最后一个参数调用<code>Class.forName()</code>去加载<code>org.apache.kafka.common.serialization.StringSerializer</code>造成异常.</p>
+<p>那么我试着使用上面方法的<code>getKafkaClassLoader()</code>这个类加载器,去加载,则运行通过,而<code>getKafkaClassLoader()</code>得到的类加载器是<code>alluxio.extensions.ExtensionsClassLoader</code>,该加载器是由Alluxio自定义的.可见在这里想要加载<code>org.apache.kafka.common.serialization.StringSerializer</code>,需要的是<code>alluxio.extensions.ExtensionsClassLoader</code>这个加载器.</p>
+<h3 id="分析">分析</h3>
+<p>为什么<code>alluxio.extensions.ExtensionsClassLoader</code>可以而<code>sun.misc.Launcher$AppClassLoader</code>不行呢?</p>
+<p>因为在出错代码执行之前,<code>org.apache.kafka.common.serialization.StringSerializer</code>这个类已经被加载过,而当时的线程上下文加载器是<code>alluxio.extensions.ExtensionsClassLoader</code>,而且所在的类的加载器(通过<code>this.getClass().getClassLoader()</code>获得)也是<code>alluxio.extensions.ExtensionsClassLoader</code>.所以才会出现这种问题.</p>
+<p>问题到这里就结束了,只需要将下面这行代码加入问题就解决了</p>
+<p><code>Thread.currentThread().setContextClassLoader(null);</code></p>
+<h3 id="进一步猜测">进一步猜测</h3>
+<p><code>Class.forName()</code>源码分析</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@CallerSensitive</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Class&lt;?&gt; forName(String name, <span class="keyword">boolean</span> initialize,</span><br><span class="line">                                   ClassLoader loader)</span><br><span class="line">        <span class="keyword">throws</span> ClassNotFoundException</span><br><span class="line">    &#123;</span><br><span class="line">        Class&lt;?&gt; caller = <span class="keyword">null</span>;</span><br><span class="line">        SecurityManager sm = System.getSecurityManager();</span><br><span class="line">        <span class="keyword">if</span> (sm != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// Reflective call to get caller class is only needed if a security manager</span></span><br><span class="line">            <span class="comment">// is present.  Avoid the overhead of making this call otherwise.</span></span><br><span class="line">            caller = Reflection.getCallerClass();</span><br><span class="line">            <span class="keyword">if</span> (sun.misc.VM.isSystemDomainLoader(loader)) &#123;</span><br><span class="line">                ClassLoader ccl = ClassLoader.getClassLoader(caller);</span><br><span class="line">                <span class="keyword">if</span> (!sun.misc.VM.isSystemDomainLoader(ccl)) &#123;</span><br><span class="line">                    sm.checkPermission(</span><br><span class="line">                        SecurityConstants.GET_CLASSLOADER_PERMISSION);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> forName0(name, initialize, loader, caller);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在我的应用中,安全管理器没有开启,所以不会去获取调用者的类去作安全检查,因此会直接进入<code>forName0()</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Called after security check for system loader access checks have been made. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> Class&lt;?&gt; forName0(String name, <span class="keyword">boolean</span> initialize,</span><br><span class="line">                                            ClassLoader loader,</span><br><span class="line">                                            Class&lt;?&gt; caller)</span><br><span class="line">        <span class="keyword">throws</span> ClassNotFoundException;</span><br></pre></td></tr></table></figure>
+<p><code>Class.forName0()</code>是本地方法,是jvm实现的.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 动态装载类型入口</span></span><br><span class="line">JNIEXPORT jclass JNICALL</span><br><span class="line">Java_java_lang_Class_forName0(JNIEnv *env, jclass <span class="keyword">this</span>, jstring classname,</span><br><span class="line">                              jboolean initialize, jobject loader, jclass caller)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">char</span> *clname;</span><br><span class="line">    jclass cls = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">128</span>];</span><br><span class="line">    jsize len;</span><br><span class="line">    jsize unicode_len;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (classname == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        JNU_ThrowNullPointerException(env, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 把类全限定名里的'.'翻译成'/'</span></span><br><span class="line">    <span class="keyword">if</span> (VerifyFixClassname(clname) == JNI_TRUE) &#123;</span><br><span class="line">        <span class="comment">/* slashes present in clname, use name b4 translation for exception */</span></span><br><span class="line">        (*env)-&gt;GetStringUTFRegion(env, classname, <span class="number">0</span>, unicode_len, clname);</span><br><span class="line">        JNU_ThrowClassNotFoundException(env, clname);</span><br><span class="line">        <span class="keyword">goto</span> done;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 验证类全限定名名合法性（是否以'/'分隔）</span></span><br><span class="line">    <span class="keyword">if</span> (!VerifyClassname(clname, JNI_TRUE)) &#123;  <span class="comment">/* expects slashed name */</span></span><br><span class="line">        JNU_ThrowClassNotFoundException(env, clname);</span><br><span class="line">        <span class="keyword">goto</span> done;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 从指定的加载器查找该类</span></span><br><span class="line">    cls = JVM_FindClassFromCaller(env, clname, initialize, loader, caller);</span><br><span class="line"></span><br><span class="line"> done:</span><br><span class="line">    <span class="keyword">if</span> (clname != buf) &#123;</span><br><span class="line">        <span class="built_in">free</span>(clname);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cls;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因此,会有一个从传入的类加载器查找的过程,所以我猜测如果没有查到该类或者没有权限加载该类,则会抛出异常.</p>
+<h3 id="further">further</h3>
+<p><a href="https://hunterzhao.io/post/2018/05/15/hotspot-explore-java-lang-class-forname/" target="_blank" rel="noopener external nofollow noreferrer">【JVM源码探秘】细说Class.forName()底层实现</a></p>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><em>深入理解Java虚拟机</em>:JVM高级特性与最佳实践(第2版)》</li>
+<li>https://hunterzhao.io/post/2018/05/15/hotspot-explore-java-lang-class-forname/)</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/25/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95%E8%A7%A3%E5%86%B3%E5%89%AA%E7%BB%B3%E5%AD%90%E9%97%AE%E9%A2%98%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7%E8%AF%81%E6%98%8E/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1699,160 +1880,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/21/%E5%93%94%E5%93%A9%E5%93%94%E5%93%A920190820%E7%AE%97%E6%B3%95%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="hcb">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/batman.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="hcb的技术空间">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/21/%E5%93%94%E5%93%A9%E5%93%94%E5%93%A920190820%E7%AE%97%E6%B3%95%E9%A2%98/" itemprop="url">哔哩哔哩20190820算法题</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-20T20:55:22Z">
-                2019-08-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index">
-                    <span itemprop="name">算法</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="题目描述">题目描述:</h3>
-<blockquote>
-<p>找出有序数组(从小到大排列)中和为给定值的两个数,要求复杂度为o(n)，找到一组即可.</p>
-</blockquote>
-<h3 id="输入描述">输入描述:</h3>
-<blockquote>
-<p>第一行:数组长度 第二行:数组各项的值 第三行: sum</p>
-</blockquote>
-<p><strong>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/08/21/%E5%93%94%E5%93%A9%E5%93%94%E5%93%A920190820%E7%AE%97%E6%B3%95%E9%A2%98/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1906,7 +1933,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1928,7 +1955,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
